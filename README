@@ -1,0 +1,44 @@
+While reading rec.games.roguelike.development  one day, I chanced upon a
+discussion about creating random names using Markov chains. It sounded fun, so
+I ran off and wrote a script to do just this.
+
+MathWorld explains Markov chains much better than I can.
+
+Now, take a deep breath and picture Revelations (from the Bible) and Alice in
+Wonderland, sitting side-by-side... I kid you not.
+
+Imagine you start reading words out of Alice and Revelations at the same time,
+but only writing down the words from Alice. When you hit two consecutive words
+which are the same in each text (e.g. "at the"), you swap and start writing
+down the words from Revelations. Continuing, every time you reach a few words
+which appear in the opposite text, you jump to that place and keep going from
+there.
+
+That's a vague description of how the algorithm works. In effect, it basically
+jumbles up a set of things to produce a new set of things. The natty thing is,
+that it has an amazing tendancy to preserve much of the meaning and style of
+the input.
+
+Somebody has already done all of this. You can find the Alice books, and the
+books of Genesis and Revelation, among other gems, at the Fun With Markov
+Chains page.
+
+You can apply the same method to strings of characters as easily as sentences
+of words. In this way, you can provide an input set of the kind of names you
+want, and the script will come up with new ones which mimic the style of the
+ones you gave it.
+
+Why?
+
+What's the point of all this? Well, if you're an author, role player or
+computer game designer, you might already understand the use of such a thing.
+When creating fictitious characters, often the author wants an original name
+with a particular style. This script makes that job a lot easier.
+
+Why would you need to jumble your names if you already have a set in the style
+you want? That's a tougher question to answer, but consider that your output
+set is always a lot bigger than your input set (due to the enormous number of
+ways to combine bits and pieces of the input). So maybe you just need more, or
+maybe you're not happy with the ones you thought up, or maybe you're just stuck
+in a derivative rut (so let the computer be derivative!).
+
