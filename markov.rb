@@ -1,46 +1,39 @@
-#!/usr/bin/env ruby
-
-class Array
-  # A random element.
-  def random
-    return self[rand(self.size)]
-  end
-end
+#! /usr/bin/env ruby
 
 class String
   # This string, indented by indent and wrapped to width.
   def wrap(indent, width)
-    result = ""
+    result = ''
     words = split(/\s+/)
-    while words.size > 0
+    until words.empty?
       maxlen = width - indent
       line = []
       linelen = 0
       words.each do |w|
-        if linelen == 0 and w.size > maxlen
+        if linelen.zero? && w.size > maxlen
           line << w
           break
         elsif linelen + w.size <= maxlen
-          line << w; linelen += w.size + 1
+          line << w
+          linelen += w.size + 1
         else
           break
         end
       end
       words = words[line.size, words.size]
-      result += " "*indent + line.join(' ') + "\n"
+      result += ' ' * indent + line.join(' ') + "\n"
     end
-    return result
+    result
   end
 end
 
 # Markov Name Generator. Generates names using Markov chains.
 class MarkovNameGenerator
-
   # Array of strings used while creating the last name.
-  attr :progress
+  attr_reader :progress
 
   # Array of all strings given as input.
-  attr :input_set
+  attr_reader :input_set
 
   # Create a Markov name generator with specified randomness and
   # n-gram size.
@@ -53,18 +46,16 @@ class MarkovNameGenerator
   # Read a list of names from a file.
   # Argument can be a filename (string) or an open file.
   def read(file)
-    begin
-      if file.class == String
-        f = File::open(file)
-      else
-        f = file
-      end
-      f.each_line do |line|
-        input(line.strip)
-      end
-    ensure
-      f.close
+    f = if file.class == String
+          File.open(file)
+        else
+          file
+        end
+    f.each_line do |line|
+      input(line.strip)
     end
+  ensure
+    f.close
   end
 
   # Input a single string into the generator.
@@ -85,30 +76,30 @@ class MarkovNameGenerator
   # A randomly generated name.
   def name
     # Use a random name to start.
-    name = @input_set.random
+    name = @input_set.sample
     @progress = []
     pos = 0
     loop do
-      chain = @chains[pos] or break
-      key = name[pos, @ngram_size] or break
-      remainders = chain[key] or break
+      chain = @chains[pos] || break
+      key = name[pos, @ngram_size] || break
+      remainders = chain[key] || break
       if rand(100) < @randomness
-        remainder = remainders.random
+        remainder = remainders.sample
         name = name[0, pos + @ngram_size]
         name += remainder
       end
       @progress << name
       pos += 1
     end
-    return name.capitalize
+    name.capitalize
   end
 end
 
 def usage
-  puts "Usage:"
-  puts "\t#{File::basename($0)} [-N] [-s S] [-r R] [-q] [-h] files"
-  puts "\t#{File::basename($0)} [-N] [-s S] [-r R] [-q] [-h] < file"
-  puts "\tcat files | #{File::basename($0)} [-N] [-s S] [-r R] [-q] [-h]"
+  puts 'Usage:'
+  puts "\t#{File.basename($PROGRAM_NAME)} [-N] [-s S] [-r R] [-q] [-h] files"
+  puts "\t#{File.basename($PROGRAM_NAME)} [-N] [-s S] [-r R] [-q] [-h] < file"
+  puts "\tcat files | #{File.basename($PROGRAM_NAME)} [-N] [-s S] [-r R] [-q] [-h]"
   puts
   puts "\t-N\tProduce N names."
   puts "\t-s S\tSpecify n-gram size."
@@ -149,13 +140,13 @@ end
 
 exit unless iterations > 0
 
-m = MarkovNameGenerator::new(randomness, ngram_size)
+m = MarkovNameGenerator.new(randomness, ngram_size)
 m.read(ARGF)
 
-if not quiet
+if !quiet
   title = "Names with N-Gram Size #{ngram_size}"
   puts title
-  puts "-"*title.size
+  puts '-' * title.size
   orig_count = 0
 end
 
@@ -165,16 +156,16 @@ iterations.times do
     puts n
   else
     if m.input_set.include?(n.downcase)
-      n = "  " + n
+      n = '  ' + n
     else
       orig_count += 1
-      n = "* " + n
+      n = '* ' + n
     end
     origin = '[' + m.progress.join(', ') + ']'
     puts n + "\n" + origin.wrap(4, 60)
   end
 end
 
-if not quiet
-  printf "(* = not in input set: %d%% originality)\n", (100*orig_count)/iterations
+if !quiet
+  printf '(* = not in input set: %d%% originality)\n', (100*orig_count)/iterations
 end
