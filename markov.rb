@@ -1,30 +1,28 @@
 #! /usr/bin/env ruby
 
-class String
-  # This string, indented by indent and wrapped to width.
-  def wrap(indent, width)
-    result = ''
-    words = split(/\s+/)
-    until words.empty?
-      maxlen = width - indent
-      line = []
-      linelen = 0
-      words.each do |w|
-        if linelen.zero? && w.size > maxlen
-          line << w
-          break
-        elsif linelen + w.size <= maxlen
-          line << w
-          linelen += w.size + 1
-        else
-          break
-        end
+# This string, indented by indent and wrapped to width.
+def wrap(str, indent, width)
+  result = ''
+  words = str.split(/\s+/)
+  until words.empty?
+    maxlen = width - indent
+    line = []
+    linelen = 0
+    words.each do |w|
+      if linelen.zero? && w.size > maxlen
+        line << w
+        break
+      elsif linelen + w.size <= maxlen
+        line << w
+        linelen += w.size + 1
+      else
+        break
       end
-      words = words[line.size, words.size]
-      result += ' ' * indent + line.join(' ') + "\n"
     end
-    result
+    words = words[line.size, words.size]
+    result += ' ' * indent + line.join(' ') + "\n"
   end
+  result
 end
 
 # Markov Name Generator. Generates names using Markov chains.
@@ -138,7 +136,7 @@ loop do
   end
 end
 
-exit unless iterations > 0
+exit unless iterations.positive?
 
 m = MarkovNameGenerator.new(randomness, ngram_size)
 m.read(ARGF)
@@ -162,10 +160,10 @@ iterations.times do
       n = '* ' + n
     end
     origin = '[' + m.progress.join(', ') + ']'
-    puts n + "\n" + origin.wrap(4, 60)
+    puts n + "\n" + wrap(origin, 4, 60)
   end
 end
 
 if !quiet
-  printf '(* = not in input set: %d%% originality)\n', (100*orig_count)/iterations
+  printf "(* = not in input set: %d%% originality)\n", (100 * orig_count) / iterations
 end
